@@ -15,8 +15,6 @@ const DATABASE string = "gotopic"
 //const FEEDCOLLECTION string = "feeds"
 //const ITEMCOLLECTION string = "items"
 //const MONGOURI string = "localhost"
-const DATABASE_URI string = "user=postgres dbname=TopicBuilder sslmode=disable password=@WSXcde3@WSXcde3"
-const RABBITMQURI string = "amqp://guest:guest@localhost:5672/"
 const CACHE = "ingestcache"
 
 type Feed struct {
@@ -186,7 +184,7 @@ func buildQuery(table string, querytype string, columns []string) string {
 	default:
 		query = fmt.Sprintf("SELECT %s FROM %s", strings.Join(columns, ","), table)
 	}
-	//fmt.Println(query)
+	//log.Println(query)
 	return query
 }
 
@@ -256,7 +254,7 @@ func (f Feeds) FindById(id string) (Feed, error) {
 	feed := Feed{}
 	err := f.DB.Get(&feed, buildQuery("feeds", "", feedColumns)+" WHERE id=$1", id)
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 		return feed, err
 	}
 	return feed, nil
@@ -267,7 +265,7 @@ func (f Feeds) FindBy(field string, value interface{}) (Feed, error) {
 	queryString := fmt.Sprintf(buildQuery("feeds", "", feedColumns)+" WHERE %s=$1", field)
 	err := f.DB.Get(&feed, queryString, value)
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 		return feed, err
 	}
 	return feed, nil
@@ -276,7 +274,7 @@ func (f Feeds) FindBy(field string, value interface{}) (Feed, error) {
 func (f Feeds) Update(feed Feed) (Feed, error) {
 	_, err := f.DB.NamedExec(buildQuery("feeds", "update", feedColumns), &feed)
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 		return Feed{}, err
 	}
 	return feed, nil
@@ -285,7 +283,7 @@ func (f Feeds) Update(feed Feed) (Feed, error) {
 func (f Feeds) Delete(feed Feed) bool {
 	_, err := f.DB.NamedExec(buildQuery("feeds", "delete", feedColumns), &feed)
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 		return false
 	}
 	return true
@@ -296,14 +294,14 @@ func (f Feeds) BulkDelete(feeds []Feed) bool {
 	for _, feed := range feeds {
 		_, err := tx.NamedExec(buildQuery("feeds", "delete", feedColumns), &feed)
 		if err != nil {
-			fmt.Println(err)
+			log.Println(err)
 			return false
 			tx.Rollback()
 		}
 	}
 	err := tx.Commit()
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 		return false
 		tx.Rollback()
 	}
@@ -442,7 +440,7 @@ func (m Meta) FindById(id string) (MetaData, error) {
 	metadata := MetaData{}
 	err := m.DB.Get(&metadata, buildQuery("metadata", "", metaColumns)+" WHERE id=$1", id)
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 		return metadata, err
 	}
 	return metadata, nil
@@ -453,7 +451,7 @@ func (m Meta) FindBy(field string, value interface{}) ([]MetaData, error) {
 	queryString := fmt.Sprintf(buildQuery("metadata", "", metaColumns)+" WHERE %s=$1", field)
 	err := m.DB.Get(&metadata, queryString, value)
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 		return metadata, err
 	}
 	return metadata, nil
@@ -462,7 +460,7 @@ func (m Meta) FindBy(field string, value interface{}) ([]MetaData, error) {
 func (m Meta) Update(metadata MetaData) (MetaData, error) {
 	_, err := m.DB.NamedExec(buildQuery("metadata", "update", metaColumns), &metadata)
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 		return MetaData{}, err
 	}
 	return metadata, nil
@@ -471,7 +469,7 @@ func (m Meta) Update(metadata MetaData) (MetaData, error) {
 func (m Meta) Delete(metadata MetaData) bool {
 	_, err := m.DB.NamedExec(buildQuery("metadata", "delete", metaColumns), &metadata)
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 		return false
 	}
 	return true
@@ -480,7 +478,7 @@ func (m Meta) Delete(metadata MetaData) bool {
 func (m Meta) DeleteByItem(id string) bool {
 	_, err := m.DB.NamedExec("delete from metadata where itemid = :id", id)
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 		return false
 	}
 	return true
@@ -491,14 +489,14 @@ func (m Meta) BulkDelete(metadata []MetaData) bool {
 	for _, meta := range metadata {
 		_, err := tx.NamedExec(buildQuery("metadata", "delete", metaColumns), &meta)
 		if err != nil {
-			fmt.Println(err)
+			log.Println(err)
 			return false
 			tx.Rollback()
 		}
 	}
 	err := tx.Commit()
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 		return false
 		tx.Rollback()
 	}
@@ -554,7 +552,7 @@ func (e Entities) FindById(id string) (Entity, error) {
 	entites := Entity{}
 	err := e.DB.Get(&entites, buildQuery("entities", "", entityColumns)+" WHERE id=$1", id)
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 		return entites, err
 	}
 	return entites, nil
@@ -563,9 +561,11 @@ func (e Entities) FindById(id string) (Entity, error) {
 func (e Entities) FindBy(field string, value interface{}) ([]Entity, error) {
 	entites := make([]Entity, 0)
 	queryString := fmt.Sprintf(buildQuery("entities", "", entityColumns)+" WHERE %s=$1", field)
-	err := e.DB.Get(&entites, queryString, value)
+	log.Println(queryString)
+	err := e.DB.Select(&entites, queryString, value)
 	if err != nil {
-		fmt.Println(err)
+		log.Println("Error getting entities")
+		log.Println(err)
 		return entites, err
 	}
 	return entites, nil
@@ -574,7 +574,7 @@ func (e Entities) FindBy(field string, value interface{}) ([]Entity, error) {
 func (e Entities) Update(entites Entity) (Entity, error) {
 	_, err := e.DB.NamedExec(buildQuery("entities", "update", entityColumns), &entites)
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 		return Entity{}, err
 	}
 	return entites, nil
@@ -583,7 +583,7 @@ func (e Entities) Update(entites Entity) (Entity, error) {
 func (e Entities) Delete(entites Entity) bool {
 	_, err := e.DB.NamedExec(buildQuery("entities", "delete", entityColumns), &entites)
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 		return false
 	}
 	return true
@@ -592,7 +592,7 @@ func (e Entities) Delete(entites Entity) bool {
 func (e Entities) DeleteByItem(id string) bool {
 	_, err := e.DB.NamedExec("delete from entities where itemid = :id", id)
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 		return false
 	}
 	return true
@@ -603,14 +603,14 @@ func (e Entities) BulkDelete(entities []Entity) bool {
 	for _, meta := range entities {
 		_, err := tx.NamedExec(buildQuery("entities", "delete", entityColumns), &meta)
 		if err != nil {
-			fmt.Println(err)
+			log.Println(err)
 			return false
 			tx.Rollback()
 		}
 	}
 	err := tx.Commit()
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 		return false
 		tx.Rollback()
 	}
