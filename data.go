@@ -68,7 +68,6 @@ var feedColumns = []string{"id", "name", "url", "baseurl", "sourceimageurl", "fe
 var itemColumns = []string{"id", "title", "description", "source", "sourceurl", "sourcetype", "author", "datepublished", "contentname", "thumbnail", "bytes", "rssdataurl", "feedid"}
 var entityColumns = []string{"id", "label", "text", "start", "stop", "itemid"}
 var metaColumns = []string{"id", "name", "content", "itemid"}
-var Debug = false
 
 type Route struct {
 	Name        string
@@ -186,10 +185,8 @@ func buildQuery(table string, querytype string, columns []string) string {
 	default:
 		query = fmt.Sprintf("SELECT %s FROM %s", strings.Join(columns, ","), table)
 	}
-	if Debug {
 
-		log.Println("Debug: ", query)
-	}
+	log.Println("Debug: ", query)
 	return query
 }
 
