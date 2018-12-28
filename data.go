@@ -68,6 +68,7 @@ var feedColumns = []string{"id", "name", "url", "baseurl", "sourceimageurl", "fe
 var itemColumns = []string{"id", "title", "description", "source", "sourceurl", "sourcetype", "author", "datepublished", "contentname", "thumbnail", "bytes", "rssdataurl", "feedid"}
 var entityColumns = []string{"id", "label", "text", "start", "stop", "itemid"}
 var metaColumns = []string{"id", "name", "content", "itemid"}
+var Debug = false
 
 type Route struct {
 	Name        string
@@ -79,7 +80,8 @@ type Route struct {
 type Routes []Route
 
 type Data struct {
-	DB *sqlx.DB
+	DB    *sqlx.DB
+	Debug bool
 }
 
 var FeedsTable = `CREATE TABLE IF NOT EXISTS public.feeds (
@@ -184,7 +186,9 @@ func buildQuery(table string, querytype string, columns []string) string {
 	default:
 		query = fmt.Sprintf("SELECT %s FROM %s", strings.Join(columns, ","), table)
 	}
-	//log.Println(query)
+	if Debug {
+		log.Println(query)
+	}
 	return query
 }
 
