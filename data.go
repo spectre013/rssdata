@@ -262,15 +262,15 @@ func (f Feeds) FindById(id string) (Feed, error) {
 	return feed, nil
 }
 
-func (f Feeds) FindBy(field string, value interface{}) (Feed, error) {
-	feed := Feed{}
+func (f Feeds) FindBy(field string, value interface{}) ([]Feed, error) {
+	feeds := make([]Feed, 0)
 	queryString := fmt.Sprintf(buildQuery("feeds", "", feedColumns)+" WHERE %s=$1", field)
-	err := f.DB.Get(&feed, queryString, value)
+	err := f.DB.Select(&feeds, queryString, value)
 	if err != nil {
 		log.Println(err)
-		return feed, err
+		return feeds, err
 	}
-	return feed, nil
+	return feeds, nil
 }
 
 func (f Feeds) Update(feed Feed) (Feed, error) {
