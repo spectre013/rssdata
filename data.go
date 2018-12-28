@@ -186,7 +186,7 @@ func buildQuery(table string, querytype string, columns []string) string {
 		query = fmt.Sprintf("SELECT %s FROM %s", strings.Join(columns, ","), table)
 	}
 
-	log.Println("Debug: ", query)
+	//log.Println("Debug: ", query)
 	return query
 }
 
