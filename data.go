@@ -87,29 +87,29 @@ var FeedsTable = `CREATE TABLE IF NOT EXISTS public.feeds (
 	id uuid NOT NULL,
 	"name" text,
 	url text NOT NULL,
-	baseurl text,
-	sourceimageurl text,
-	feeditemurl text,
-	sourcenameinternal text,
-	imagecontentid text,
+	baseurl text DEFAULT "",
+	sourceimageurl text DEFAULT "",
+	feeditemurl text DEFAULT "",
+	sourcenameinternal text DEFAULT "",
+	imagecontentid text DEFAULT "",
 	active bool,
-	pkifingerprint text,
+	pkifingerprint text DEFAULT "",
 	PRIMARY KEY(id)
 );`
 
 var ItemTable = `CREATE TABLE IF NOT EXISTS public.items (
 	id uuid NOT NULL,
-	title text,
-	description text, 
-	source text,
-	sourceurl text,
-	sourcetype text,
-	author text,
+	title text DEFAULT "",
+	description text DEFAULT "", 
+	source text DEFAULT "",
+	sourceurl text DEFAULT "",
+	sourcetype text DEFAULT "",
+	author text DEFAULT "",
 	datepublished timestamptz, 
-	contentname text, 
-	thumbnail text,
+	contentname text DEFAULT "", 
+	thumbnail text DEFAULT "",
 	bytes bytea,
-	rssdataurl text,
+	rssdataurl text DEFAULT "",
 	feedid uuid NOT NULL,
 	PRIMARY KEY(id)
 );
@@ -119,8 +119,8 @@ CREATE INDEX IF NOT EXISTS items_sourceurl ON public.items (sourceurl);
 
 var MedataDataTable = `CREATE TABLE IF NOT EXISTS public.metadata (
 	id uuid NOT NULL,
-	name text,
-	content text,
+	name text DEFAULT "",
+	content text DEFAULT "",
 	itemid uuid NOT NULL,
 	PRIMARY KEY(id)
 );
