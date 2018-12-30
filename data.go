@@ -184,7 +184,7 @@ func (i Items) Create(item Item) (Item, error) {
 	c := i.Session.DB(DATABASE).C(ITEMCOLLECTION)
 	_, err := c.UpsertId(item.Id, item)
 	if err != nil {
-		log.Println(err)
+		return Item{}, err
 	}
 	return item, nil
 }
