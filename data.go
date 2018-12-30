@@ -212,7 +212,7 @@ func (i Items) FindById(id string) (Item, error) {
 func (i Items) FindBy(field string, value interface{}) ([]Item, error) {
 	items := make([]Item, 0)
 	col := i.Session.DB(DATABASE).C(ITEMCOLLECTION)
-	query := fmt.Sprintf(`{"%s":"%s"}"`, field, value)
+	query := fmt.Sprintf(`{"%s":"%s"}`, field, value)
 	err := col.Find(query).All(&items)
 	if err != nil {
 		return make([]Item, 0), err
