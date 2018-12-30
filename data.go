@@ -1,7 +1,6 @@
 package rssData
 
 import (
-	"fmt"
 	"github.com/globalsign/mgo"
 	"github.com/globalsign/mgo/bson"
 	"github.com/labstack/echo"
@@ -140,7 +139,7 @@ func (f Feeds) FindById(id string) (Feed, error) {
 func (f Feeds) FindBy(field string, value interface{}) ([]Feed, error) {
 	feeds := make([]Feed, 0)
 	col := f.Session.DB(DATABASE).C(FEEDCOLLECTION)
-	query := fmt.Sprintf(`{"%s":"%s"}"`, field, value)
+	query := bson.M{field: value}
 	err := col.Find(query).All(&feeds)
 	if err != nil {
 		return make([]Feed, 0), err
@@ -212,7 +211,7 @@ func (i Items) FindById(id string) (Item, error) {
 func (i Items) FindBy(field string, value interface{}) ([]Item, error) {
 	items := make([]Item, 0)
 	col := i.Session.DB(DATABASE).C(ITEMCOLLECTION)
-	query := fmt.Sprintf(`{"%s":"%s"}`, field, value)
+	query := bson.M{field: value}
 	err := col.Find(query).All(&items)
 	if err != nil {
 		return make([]Item, 0), err
