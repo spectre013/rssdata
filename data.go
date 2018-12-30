@@ -182,7 +182,7 @@ func (f Feeds) BulkDelete(feeds []Feed) bool {
 // #######################################################
 func (i Items) Create(item Item) (Item, error) {
 	c := i.Session.DB(DATABASE).C(ITEMCOLLECTION)
-	_, err := c.Upsert(item.Id.Hex(), item)
+	_, err := c.UpsertId(item.Id, item)
 	if err != nil {
 		log.Println(err)
 	}
