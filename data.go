@@ -81,6 +81,7 @@ func (f Feeds) Create(feed Feed) (Feed, error) {
 	_, err := c.Upsert(feed.Id, feed)
 	if err != nil {
 		log.Println(err)
+		return Feed{}, err
 	}
 	return feed, nil
 }
