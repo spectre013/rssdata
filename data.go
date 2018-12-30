@@ -78,7 +78,7 @@ type Items struct {
 // #######################################################
 func (f Feeds) Create(feed Feed) (Feed, error) {
 	c := f.Session.DB(DATABASE).C(FEEDCOLLECTION)
-	_, err := c.Upsert(feed.Id, feed)
+	err := c.Insert(feed)
 	if err != nil {
 		log.Println(err)
 		return Feed{}, err
