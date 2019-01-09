@@ -1,4 +1,4 @@
-module github.com/spectre03/rssdata
+module github.com/spectre013/rssdata
 
 require (
 	github.com/globalsign/mgo v0.0.0-20181015135952-eeefdecb41b8
