@@ -8,9 +8,9 @@ import (
 	"time"
 )
 
-const DATABASE string = "rss-data"
+const DATABASE string = "newsmap"
 const FEEDCOLLECTION string = "feeds"
-const ITEMCOLLECTION string = "rssResponse"
+const ITEMCOLLECTION string = "items"
 
 type Feed struct {
 	Id                 bson.ObjectId `json:"id" bson:"_id,omitempty"`
